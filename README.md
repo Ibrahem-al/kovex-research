@@ -17,7 +17,7 @@ cd kovex-research
 
 # 2. Install dependencies
 npm install
-pip install mypy
+pip install -r requirements.txt
 
 # 3. Start Neo4j (also applies the schema via the neo4j-init service)
 docker compose up -d

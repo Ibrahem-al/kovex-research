@@ -32,6 +32,8 @@ import subprocess
 import sys
 import threading
 import time
+
+import psutil
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -146,7 +148,32 @@ def _server(kovex_root: Path) -> Generator[MCPClient, None, None]:
         client.initialize()
         yield client
     finally:
+        # On Windows, subprocess.Popen.terminate() kills only the immediate
+        # child — typically npx.cmd, which has already spawned a node process
+        # running ts-node + server/index.ts. That grandchild becomes an orphan
+        # holding file handles in the working tree. Enumerate the descendant
+        # process tree via psutil *before* terminating the parent (once a
+        # process exits its children get reparented and we lose the link),
+        # then terminate/kill every descendant explicitly.
+        try:
+            descendants = psutil.Process(proc.pid).children(recursive=True)
+        except psutil.NoSuchProcess:
+            descendants = []
+
         proc.terminate()
+        for child in descendants:
+            try:
+                child.terminate()
+            except psutil.NoSuchProcess:
+                pass
+
+        _, still_alive = psutil.wait_procs(descendants, timeout=3)
+        for child in still_alive:
+            try:
+                child.kill()
+            except psutil.NoSuchProcess:
+                pass
+
         try:
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:
