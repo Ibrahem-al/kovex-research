@@ -1,0 +1,21 @@
+{
+  "name": "kovex",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "server": "ts-node server/index.ts",
+    "index": "ts-node indexer/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "neo4j-driver": "^5.18.0",
+    "tree-sitter-python": "^0.25.0",
+    "web-tree-sitter": "^0.26.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,3 @@
+[submodule "httpx"]
+	path = httpx
+	url = https://github.com/encode/httpx.git

@@ -1,0 +1,338 @@
+{
+  "metadata": {
+    "codebase": "httpx",
+    "k_default": 2,
+    "total_tasks": 14,
+    "description": "Each task defines a write by Agent A and a read-registration by Agent B. The harness runs each task twice: once with Kovex coordination (register_read before write) and once as baseline (no registration, no notification). conflict_check.py tests agent_b_code against pre-write and post-write codebase states using mypy.",
+    "groups": {
+      "distance_0": { "count": 2, "tasks": ["T01", "T02"] },
+      "distance_1": { "count": 6, "tasks": ["T03", "T04", "T05", "T06", "T07", "T08"] },
+      "distance_2": { "count": 4, "tasks": ["T09", "T10", "T11", "T12"] },
+      "false_negative": { "count": 2, "tasks": ["T13", "T14"], "note": "d=3 > k=2; Kovex does NOT notify; conflict still exists; these measure false-negative rate" }
+    },
+    "node_ids": {
+      "AsyncClient.send":                    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "AsyncClient.request":                 "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "AsyncClient._send_handling_auth":     "25f253b2c698e2eef5fbabd4156c7c371fb25e926eace0a55db156fb73bb3917",
+      "AsyncClient._send_handling_redirects":"05984b42a83b06c094574115129efe20a9d78a840bcffaacada341170c9a112f",
+      "AsyncClient._send_single_request":    "0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1",
+      "AsyncClient._transport_for_url":      "b35461da346d6458546b2c360a6fe270bd13b9d49150a70738505d3cba05a9f7",
+      "AsyncClient.get":                     "140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428",
+      "AsyncClient.post":                    "2de78327457ca65093165b76584aaad9ea5d14156f8832c9fc05537a3f7f7c12"
+    }
+  },
+
+  "tasks": [
+
+    {
+      "task_id": "T01",
+      "group": "distance_0",
+      "description": "Agent B uses AsyncClient.send with stream=True. Agent A removes the stream parameter entirely.",
+      "write_target_id":    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "write_target_name":  "AsyncClient.send",
+      "b_registration_id":  "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "b_registration_name":"AsyncClient.send",
+      "expected_distance":  0,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        stream: bool = False,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "new_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "note": "Remove stream parameter from AsyncClient.send. Uses async def anchor so it does not match the sync Client.send."
+      },
+      "agent_b_code": "import httpx\n\nasync def streaming_send(\n    client: httpx.AsyncClient,\n    request: httpx.Request,\n) -> httpx.Response:\n    \"\"\"Send request in streaming mode.\"\"\"\n    # stream parameter - removed by Agent A's write\n    return await client.send(request, stream=True)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T02",
+      "group": "distance_0",
+      "description": "Agent B calls AsyncClient.request with content= keyword. Agent A renames content to body.",
+      "write_target_id":    "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "write_target_name":  "AsyncClient.request",
+      "b_registration_id":  "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "b_registration_name":"AsyncClient.request",
+      "expected_distance":  0,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        content: RequestContent | None = None,",
+        "new_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        body: RequestContent | None = None,",
+        "note": "Rename content -> body in AsyncClient.request. Anchored on 'async def request(' to avoid matching sync Client.request."
+      },
+      "agent_b_code": "import httpx\n\nasync def post_bytes(\n    client: httpx.AsyncClient,\n    url: str,\n    data: bytes,\n) -> httpx.Response:\n    \"\"\"POST raw bytes to a URL.\"\"\"\n    # content keyword - renamed to body by Agent A's write\n    return await client.request(\"POST\", url, content=data)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .content.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T03",
+      "group": "distance_1",
+      "description": "Agent B writes code that calls AsyncClient.send with stream=True. Agent B is registered on AsyncClient.request (d=1 from send via CALLS). Agent A removes stream from AsyncClient.send.",
+      "write_target_id":    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "write_target_name":  "AsyncClient.send",
+      "b_registration_id":  "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "b_registration_name":"AsyncClient.request",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        stream: bool = False,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "new_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "note": "Same as T01 - remove stream from AsyncClient.send"
+      },
+      "agent_b_code": "import httpx\n\nasync def request_and_stream(\n    client: httpx.AsyncClient,\n    url: str,\n) -> httpx.Response:\n    \"\"\"Build a request via client.request context then send with streaming.\"\"\"\n    # Agent B registered on AsyncClient.request but their implementation\n    # also calls send directly with stream mode.\n    request = client.build_request(\"GET\", url)\n    return await client.send(request, stream=True)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T04",
+      "group": "distance_1",
+      "description": "Agent B writes code that calls AsyncClient.send. Agent B is registered on AsyncClient._send_handling_auth (d=1 callee of send). Agent A removes stream from AsyncClient.send.",
+      "write_target_id":    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "write_target_name":  "AsyncClient.send",
+      "b_registration_id":  "25f253b2c698e2eef5fbabd4156c7c371fb25e926eace0a55db156fb73bb3917",
+      "b_registration_name":"AsyncClient._send_handling_auth",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        stream: bool = False,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "new_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "note": "Same as T01/T03 - remove stream from AsyncClient.send"
+      },
+      "agent_b_code": "import httpx\n\nasync def send_no_redirects(\n    client: httpx.AsyncClient,\n    request: httpx.Request,\n) -> httpx.Response:\n    \"\"\"Send request with streaming, following no redirects.\"\"\"\n    # Agent B registered on _send_handling_auth but calls send directly.\n    return await client.send(request, stream=True, follow_redirects=False)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T05",
+      "group": "distance_1",
+      "description": "Agent B calls AsyncClient.request with content=. Agent B is registered on AsyncClient.get (d=1 caller of request). Agent A renames content to body in AsyncClient.request.",
+      "write_target_id":    "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "write_target_name":  "AsyncClient.request",
+      "b_registration_id":  "140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428",
+      "b_registration_name":"AsyncClient.get",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        content: RequestContent | None = None,",
+        "new_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        body: RequestContent | None = None,",
+        "note": "Same as T02 - rename content to body in AsyncClient.request"
+      },
+      "agent_b_code": "import httpx\n\nasync def get_with_body(\n    client: httpx.AsyncClient,\n    url: str,\n    payload: bytes,\n) -> httpx.Response:\n    \"\"\"GET request with a body payload (unusual but valid).\"\"\"\n    # Agent B registered on AsyncClient.get but uses request directly.\n    return await client.request(\"GET\", url, content=payload)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .content.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T06",
+      "group": "distance_1",
+      "description": "Agent B calls AsyncClient.request with content=. Registered on AsyncClient.post (d=1 caller of request). Agent A renames content to body.",
+      "write_target_id":    "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+      "write_target_name":  "AsyncClient.request",
+      "b_registration_id":  "2de78327457ca65093165b76584aaad9ea5d14156f8832c9fc05537a3f7f7c12",
+      "b_registration_name":"AsyncClient.post",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        content: RequestContent | None = None,",
+        "new_code": "    async def request(\n        self,\n        method: str,\n        url: URL | str,\n        *,\n        body: RequestContent | None = None,",
+        "note": "Same as T02/T05 - rename content to body"
+      },
+      "agent_b_code": "import httpx\n\nasync def post_binary(\n    client: httpx.AsyncClient,\n    url: str,\n    binary_data: bytes,\n) -> httpx.Response:\n    \"\"\"POST binary content.\"\"\"\n    # Agent B registered on AsyncClient.post; uses request directly.\n    return await client.request(\"POST\", url, content=binary_data)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .content.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T07",
+      "group": "distance_1",
+      "description": "Agent B subclasses AsyncClient and overrides _send_handling_redirects. Agent B registered on AsyncClient._send_handling_auth (d=1 caller of _send_handling_redirects). Agent A adds required stream param to _send_handling_redirects.",
+      "write_target_id":    "05984b42a83b06c094574115129efe20a9d78a840bcffaacada341170c9a112f",
+      "write_target_name":  "AsyncClient._send_handling_redirects",
+      "b_registration_id":  "25f253b2c698e2eef5fbabd4156c7c371fb25e926eace0a55db156fb73bb3917",
+      "b_registration_name":"AsyncClient._send_handling_auth",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def _send_handling_redirects(\n        self,\n        request: Request,\n        follow_redirects: bool,\n        history: list[Response],\n    ) -> Response:",
+        "new_code": "    async def _send_handling_redirects(\n        self,\n        request: Request,\n        stream: bool,\n        follow_redirects: bool,\n        history: list[Response],\n    ) -> Response:",
+        "note": "Add required positional stream: bool parameter to AsyncClient._send_handling_redirects."
+      },
+      "agent_b_code": "import httpx\nfrom httpx._models import Request, Response\n\nclass LoggingAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient subclass that logs redirect handling.\"\"\"\n\n    async def _send_handling_redirects(\n        self,\n        request: Request,\n        follow_redirects: bool,\n        history: list,\n    ) -> tuple:\n        # Override without new stream param - breaks after Agent A adds it\n        print(f\"Handling redirects for {request.url}\")\n        return await super()._send_handling_redirects(\n            request, follow_redirects, history\n        )\n",
+      "expected_mypy_error_pattern": "Signature of ._send_handling_redirects. incompatible|Missing positional argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T08",
+      "group": "distance_1",
+      "description": "Agent B subclasses AsyncClient and overrides _send_single_request. Registered on AsyncClient._send_handling_redirects (d=1 caller of _send_single_request). Agent A adds required deadline param to _send_single_request.",
+      "write_target_id":    "0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1",
+      "write_target_name":  "AsyncClient._send_single_request",
+      "b_registration_id":  "05984b42a83b06c094574115129efe20a9d78a840bcffaacada341170c9a112f",
+      "b_registration_name":"AsyncClient._send_handling_redirects",
+      "expected_distance":  1,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def _send_single_request(self, request: Request) -> Response:",
+        "new_code": "    async def _send_single_request(self, request: Request, deadline: float) -> Response:",
+        "note": "Add required deadline: float parameter to AsyncClient._send_single_request."
+      },
+      "agent_b_code": "import httpx\nfrom httpx._models import Request, Response\n\nclass TracingAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient that traces single requests.\"\"\"\n\n    async def _send_single_request(self, request: Request) -> Response:\n        # Override without new deadline param - breaks after Agent A adds it\n        print(f\"Sending single request to {request.url}\")\n        return await super()._send_single_request(request)\n",
+      "expected_mypy_error_pattern": "Signature of ._send_single_request. incompatible|Missing positional argument .deadline.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T09",
+      "group": "distance_2",
+      "description": "Agent B uses AsyncClient.send with stream=True. Registered on AsyncClient.get (d=2: get->request->send). Agent A removes stream. Tests k=2 notification reach.",
+      "write_target_id":    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "write_target_name":  "AsyncClient.send",
+      "b_registration_id":  "140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428",
+      "b_registration_name":"AsyncClient.get",
+      "expected_distance":  2,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        stream: bool = False,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "new_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "note": "Same as T01 - remove stream from AsyncClient.send"
+      },
+      "agent_b_code": "import httpx\n\nasync def get_streaming(\n    client: httpx.AsyncClient,\n    url: str,\n) -> httpx.Response:\n    \"\"\"GET with explicit streaming mode via send.\"\"\"\n    # Agent B registered on AsyncClient.get but calls send directly.\n    request = client.build_request(\"GET\", url)\n    return await client.send(request, stream=True)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T10",
+      "group": "distance_2",
+      "description": "Agent B uses AsyncClient.send with stream=True. Registered on AsyncClient.post (d=2: post->request->send). Agent A removes stream. Tests k=2 reach from a different HTTP method.",
+      "write_target_id":    "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "write_target_name":  "AsyncClient.send",
+      "b_registration_id":  "2de78327457ca65093165b76584aaad9ea5d14156f8832c9fc05537a3f7f7c12",
+      "b_registration_name":"AsyncClient.post",
+      "expected_distance":  2,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        stream: bool = False,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "new_code": "    async def send(\n        self,\n        request: Request,\n        *,\n        auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n        follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n    ) -> Response:",
+        "note": "Same as T01 - remove stream from AsyncClient.send"
+      },
+      "agent_b_code": "import httpx\n\nasync def post_streaming(\n    client: httpx.AsyncClient,\n    url: str,\n    data: bytes,\n) -> httpx.Response:\n    \"\"\"POST with explicit streaming via send.\"\"\"\n    request = client.build_request(\"POST\", url, content=data)\n    return await client.send(request, stream=True)\n",
+      "expected_mypy_error_pattern": "Unexpected keyword argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T11",
+      "group": "distance_2",
+      "description": "Agent B subclasses and overrides _send_handling_redirects (write target). Registered on AsyncClient.send (d=2: send->_send_handling_auth->_send_handling_redirects). Agent A adds required stream param to _send_handling_redirects.",
+      "write_target_id":    "05984b42a83b06c094574115129efe20a9d78a840bcffaacada341170c9a112f",
+      "write_target_name":  "AsyncClient._send_handling_redirects",
+      "b_registration_id":  "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "b_registration_name":"AsyncClient.send",
+      "expected_distance":  2,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def _send_handling_redirects(\n        self,\n        request: Request,\n        follow_redirects: bool,\n        history: list[Response],\n    ) -> Response:",
+        "new_code": "    async def _send_handling_redirects(\n        self,\n        request: Request,\n        stream: bool,\n        follow_redirects: bool,\n        history: list[Response],\n    ) -> Response:",
+        "note": "Same as T07 - add required stream param to _send_handling_redirects"
+      },
+      "agent_b_code": "import httpx\nfrom httpx._models import Request, Response\n\nclass CachingAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient with cached redirect handling.\"\"\"\n\n    async def _send_handling_redirects(\n        self,\n        request: Request,\n        follow_redirects: bool,\n        history: list,\n    ) -> tuple:\n        # Missing new stream param - conflict after Agent A's write\n        return await super()._send_handling_redirects(\n            request, follow_redirects, history\n        )\n",
+      "expected_mypy_error_pattern": "Signature of ._send_handling_redirects. incompatible|Missing positional argument .stream.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T12",
+      "group": "distance_2",
+      "description": "Agent B subclasses and overrides _send_single_request (write target). Registered on AsyncClient._send_handling_auth (d=2: auth->redirects->single_request). Agent A adds required deadline param to _send_single_request.",
+      "write_target_id":    "0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1",
+      "write_target_name":  "AsyncClient._send_single_request",
+      "b_registration_id":  "25f253b2c698e2eef5fbabd4156c7c371fb25e926eace0a55db156fb73bb3917",
+      "b_registration_name":"AsyncClient._send_handling_auth",
+      "expected_distance":  2,
+      "k": 2,
+      "expected_kovex_notifies": true,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def _send_single_request(self, request: Request) -> Response:",
+        "new_code": "    async def _send_single_request(self, request: Request, deadline: float) -> Response:",
+        "note": "Same as T08 - add required deadline param to _send_single_request"
+      },
+      "agent_b_code": "import httpx\nfrom httpx._models import Request, Response\n\nclass TimeboxedAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient that enforces per-request timeboxing.\"\"\"\n\n    async def _send_single_request(self, request: Request) -> Response:\n        # Override missing new deadline param - conflict after Agent A's write\n        return await super()._send_single_request(request)\n",
+      "expected_mypy_error_pattern": "Signature of ._send_single_request. incompatible|Missing positional argument .deadline.",
+      "expected_conflict": true
+    },
+
+    {
+      "task_id": "T13",
+      "group": "false_negative",
+      "description": "Agent B overrides _send_single_request. Registered on AsyncClient.send (d=3 from _send_single_request: send->auth->redirects->single_request). k=2 so Kovex does NOT notify. Conflict still exists. Measures false-negative rate.",
+      "write_target_id":    "0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1",
+      "write_target_name":  "AsyncClient._send_single_request",
+      "b_registration_id":  "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+      "b_registration_name":"AsyncClient.send",
+      "expected_distance":  3,
+      "k": 2,
+      "expected_kovex_notifies": false,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    async def _send_single_request(self, request: Request) -> Response:",
+        "new_code": "    async def _send_single_request(self, request: Request, deadline: float) -> Response:",
+        "note": "Same as T08/T12 - add required deadline param to _send_single_request"
+      },
+      "agent_b_code": "import httpx\nfrom httpx._models import Request, Response\n\nclass RetryingAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient with automatic retry on _send_single_request.\"\"\"\n\n    async def _send_single_request(self, request: Request) -> Response:\n        # d=3 from write target to registration - Kovex misses this at k=2\n        for attempt in range(3):\n            try:\n                return await super()._send_single_request(request)\n            except httpx.HTTPError:\n                if attempt == 2:\n                    raise\n        raise RuntimeError(\"unreachable\")\n",
+      "expected_mypy_error_pattern": "Signature of ._send_single_request. incompatible|Missing positional argument .deadline.",
+      "expected_conflict": true,
+      "false_negative_note": "Kovex correctly does not notify at k=2 because d=3. Conflict exists. This is a true false-negative for k=2."
+    },
+
+    {
+      "task_id": "T14",
+      "group": "false_negative",
+      "description": "Agent B overrides _transport_for_url. Registered on AsyncClient._send_handling_auth (d=3: auth->redirects->single_request->transport_for_url). k=2 so Kovex does NOT notify. Conflict still exists.",
+      "write_target_id":    "b35461da346d6458546b2c360a6fe270bd13b9d49150a70738505d3cba05a9f7",
+      "write_target_name":  "AsyncClient._transport_for_url",
+      "b_registration_id":  "25f253b2c698e2eef5fbabd4156c7c371fb25e926eace0a55db156fb73bb3917",
+      "b_registration_name":"AsyncClient._send_handling_auth",
+      "expected_distance":  3,
+      "k": 2,
+      "expected_kovex_notifies": false,
+      "source_patch": {
+        "target_file": "httpx/_client.py",
+        "old_code": "    def _transport_for_url(self, url: URL) -> AsyncBaseTransport:",
+        "new_code": "    def _transport_for_url(self, url: URL, timeout: float = 0.0) -> AsyncBaseTransport:",
+        "note": "Add optional timeout param to AsyncClient._transport_for_url. Return type AsyncBaseTransport is unique to the async version vs BaseTransport in Client."
+      },
+      "agent_b_code": "import httpx\nfrom httpx._urls import URL\nfrom httpx._transports.base import AsyncBaseTransport\n\nclass ProxyAwareAsyncClient(httpx.AsyncClient):\n    \"\"\"AsyncClient that routes through a custom proxy transport.\"\"\"\n\n    def _transport_for_url(self, url: URL) -> AsyncBaseTransport:\n        # Override missing new timeout param - conflict after Agent A's write\n        if \"internal\" in str(url):\n            return self._transport\n        return super()._transport_for_url(url)\n",
+      "expected_mypy_error_pattern": "Signature of ._transport_for_url. incompatible",
+      "expected_conflict": true,
+      "false_negative_note": "Kovex correctly does not notify at k=2 because d=3. Conflict exists. Tests whether increasing k to 3 would catch this class of conflicts."
+    }
+
+  ]
+}

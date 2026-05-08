@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+dist/
+
+# Python caches
+.mypy_cache/
+__pycache__/
+*.pyc
+
+# Claude Code project settings
+.claude/
+
+# Runtime experiment outputs
+logs/write_events.jsonl
+eval/results/*.json
+!eval/results/.gitkeep
+
+# Intermediate paper drafts (final paper is kovex_paper.pdf — tracked)
+kovex_phase1.pdf
+kovex_phase2.pdf
+
+# Docker volumes
+neo4j_data/
