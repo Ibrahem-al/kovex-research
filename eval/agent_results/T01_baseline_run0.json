@@ -1,0 +1,92 @@
+{
+  "task_id": "T01",
+  "condition": "baseline",
+  "run_idx": 0,
+  "model": "claude-sonnet-4-6",
+  "agent_a_id": "agentA_T01_baseline_r0",
+  "agent_b_id": "agentB_T01_baseline_r0",
+  "write_target_name": "AsyncClient.send",
+  "b_reg_name": "AsyncClient.send",
+  "expected_distance": 0,
+  "expected_kovex_notifies": true,
+  "timestamp": "2026-05-09T18:19:19.626980+00:00",
+  "phase1": {
+    "turns": 1,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<python_code>\nimport httpx\n\nasync def streaming_send(client: httpx.AsyncClient, request: httpx.Request) -> httpx.Response:\n    return await client.send(request, stream=True)\n</python_code>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.005181799999999999,
+        "session_id": "e137b495-22e9-4ec9-848a-db07787292f6",
+        "input_tokens": 3,
+        "output_tokens": 60
+      }
+    ],
+    "tool_calls": [],
+    "final_text": "<python_code>\nimport httpx\n\nasync def streaming_send(client: httpx.AsyncClient, request: httpx.Request) -> httpx.Response:\n    return await client.send(request, stream=True)\n</python_code>",
+    "final_session_id": "e137b495-22e9-4ec9-848a-db07787292f6",
+    "error": null
+  },
+  "agent_a": {
+    "turns": 2,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<tool_call>\n{\"name\": \"commit_write\", \"input\": {\"agentId\": \"agentA_T01_baseline_r0\", \"nodeId\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"patch\": {\"signature\": \"async def send(\\n    self,\\n    request: Request,\\n    *,\\n    auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\\n    follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\\n) -> Response\", \"return_type\": \"Response\"}}}\n</tool_call>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0076251999999999995,
+        "session_id": "d592f778-969c-4d7a-9626-ce4c12bb5394",
+        "input_tokens": 3,
+        "output_tokens": 204
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "`commit_write` succeeded. Here's a summary of the result:\n\n| Field | Value |\n|---|---|\n| `write_id` | `6fa1cd95-e0b4-4f62-a13c-ff89a9d85a39` |\n| `h_pre` | `00394a2e...` |\n| `h_post` | `e23ea745...` |\n\n**Notify set** \u2014 5 agents notified at distance 0 (direct node match):\n- `agentB_T01_kovex_r0`\n- `agentB_T01_kovex_r1`\n- `agentB_T01_kovex_r2`\n- `agentB_T01_kovex_r3`\n- `agentB_T01_kovex_r4`\n\nThe write was logged and all registered readers of node `6fcd69ad...` have been enqueued a directive. The `stream` parameter removal is now committed to the graph.",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.048914099999999995,
+        "session_id": "d592f778-969c-4d7a-9626-ce4c12bb5394",
+        "input_tokens": 3,
+        "output_tokens": 242
+      }
+    ],
+    "tool_calls": [
+      {
+        "turn": 0,
+        "name": "commit_write",
+        "input": {
+          "agentId": "agentA_T01_baseline_r0",
+          "nodeId": "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+          "patch": {
+            "signature": "async def send(\n    self,\n    request: Request,\n    *,\n    auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n    follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n) -> Response",
+            "return_type": "Response"
+          }
+        },
+        "is_error": false,
+        "result_preview": "{\"write_id\": \"6fa1cd95-e0b4-4f62-a13c-ff89a9d85a39\", \"h_pre\": \"00394a2ea12dfa83d1e43225d7a8309cf40f168005e1a520323cb444722fbc63\", \"h_post\": \"e23ea74568f206e6770e865dbf6e02cc7046f37529e34bf0c9bc0414a46059ea\", \"notify_set\": [{\"agent\": \"agentB_T01_kovex_r0\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r1\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r2\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r3\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r4\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}]}",
+        "elapsed_ms": 32.55
+      }
+    ],
+    "final_text": "`commit_write` succeeded. Here's a summary of the result:\n\n| Field | Value |\n|---|---|\n| `write_id` | `6fa1cd95-e0b4-4f62-a13c-ff89a9d85a39` |\n| `h_pre` | `00394a2e...` |\n| `h_post` | `e23ea745...` |\n\n**Notify set** \u2014 5 agents notified at distance 0 (direct node match):\n- `agentB_T01_kovex_r0`\n- `agentB_T01_kovex_r1`\n- `agentB_T01_kovex_r2`\n- `agentB_T01_kovex_r3`\n- `agentB_T01_kovex_r4`\n\nThe write was logged and all registered readers of node `6fcd69ad...` have been enqueued a directive. The `stream` parameter removal is now committed to the graph.",
+    "final_session_id": "d592f778-969c-4d7a-9626-ce4c12bb5394",
+    "error": null
+  },
+  "phase2": null,
+  "final_code": "import httpx\n\nasync def streaming_send(client: httpx.AsyncClient, request: httpx.Request) -> httpx.Response:\n    return await client.send(request, stream=True)",
+  "mypy": {
+    "agent_code_pre_passed": true,
+    "agent_code_post_passed": false,
+    "raw_pre_passed": true,
+    "raw_post_passed": false,
+    "pre_write_output": "",
+    "post_write_output": "httpx\\_client.py:1583: error: Unexpected keyword argument \"stream\" for \"send\" of \"AsyncClient\"  [call-arg]\nhttpx\\_client.py:1635: error: Name \"stream\" is not defined  [name-defined]\nagent_b_code.py:4: error: Unexpected keyword argument \"stream\" for \"send\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:4: note: \"send\" defined in \"httpx._client\"",
+    "error": null
+  },
+  "error": null
+}

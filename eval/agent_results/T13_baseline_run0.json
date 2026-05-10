@@ -1,0 +1,92 @@
+{
+  "task_id": "T13",
+  "condition": "baseline",
+  "run_idx": 0,
+  "model": "claude-sonnet-4-6",
+  "agent_a_id": "agentA_T13_baseline_r0",
+  "agent_b_id": "agentB_T13_baseline_r0",
+  "write_target_name": "AsyncClient._send_single_request",
+  "b_reg_name": "AsyncClient.send",
+  "expected_distance": 3,
+  "expected_kovex_notifies": false,
+  "timestamp": "2026-05-09T18:56:22.617465+00:00",
+  "phase1": {
+    "turns": 1,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<python_code>\nimport httpx\nfrom httpx._models import Request, Response\n\n\nclass RetryingAsyncClient(httpx.AsyncClient):\n    async def _send_single_request(self, request: Request) -> Response:\n        last_exc = None\n        for attempt in range(3):\n            try:\n                return await super()._send_single_request(request)\n            except httpx.HTTPError as exc:\n                last_exc = exc\n        raise last_exc\n</python_code>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0061292,
+        "session_id": "1262e307-8cdb-45c8-bd3f-8e34ebe7b030",
+        "input_tokens": 3,
+        "output_tokens": 122
+      }
+    ],
+    "tool_calls": [],
+    "final_text": "<python_code>\nimport httpx\nfrom httpx._models import Request, Response\n\n\nclass RetryingAsyncClient(httpx.AsyncClient):\n    async def _send_single_request(self, request: Request) -> Response:\n        last_exc = None\n        for attempt in range(3):\n            try:\n                return await super()._send_single_request(request)\n            except httpx.HTTPError as exc:\n                last_exc = exc\n        raise last_exc\n</python_code>",
+    "final_session_id": "1262e307-8cdb-45c8-bd3f-8e34ebe7b030",
+    "error": null
+  },
+  "agent_a": {
+    "turns": 2,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<tool_call>\n{\"name\": \"commit_write\", \"input\": {\"agentId\": \"agentA_T13_baseline_r0\", \"nodeId\": \"0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1\", \"patch\": {\"signature\": \"async def _send_single_request(self, request: Request, deadline: float) -> Response\", \"return_type\": \"Response\"}}}\n</tool_call>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.006420599999999999,
+        "session_id": "4c27f54e-946f-49a9-ab74-6f19692b80ba",
+        "input_tokens": 3,
+        "output_tokens": 126
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "`commit_write` succeeded.\n\n- **write_id**: `bea131ab-1923-42e9-afbb-d94c453cd5aa`\n- **h_pre**: `82dc0f4d46e82251cb8ae8a764355229e9856df7dd74a5378e9155bb866c2e1d`\n- **h_post**: `5275b11820c2c5f6586904dfca84c83e98ac1382d26a3b6a7818c3fcd7d492fc`\n- **notify_set**: `[]` (no agents were registered on this node or its k-hop neighbors)\n\nThe signature change for `AsyncClient._send_single_request` has been committed to the graph. Since this is the baseline run, the empty `notify_set` is expected \u2014 no coordination occurred.",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0466566,
+        "session_id": "4c27f54e-946f-49a9-ab74-6f19692b80ba",
+        "input_tokens": 3,
+        "output_tokens": 205
+      }
+    ],
+    "tool_calls": [
+      {
+        "turn": 0,
+        "name": "commit_write",
+        "input": {
+          "agentId": "agentA_T13_baseline_r0",
+          "nodeId": "0104e2d80bba538176c1ed9fdf09a36640912d40341f3a9595c7cbf042a815a1",
+          "patch": {
+            "signature": "async def _send_single_request(self, request: Request, deadline: float) -> Response",
+            "return_type": "Response"
+          }
+        },
+        "is_error": false,
+        "result_preview": "{\"write_id\": \"bea131ab-1923-42e9-afbb-d94c453cd5aa\", \"h_pre\": \"82dc0f4d46e82251cb8ae8a764355229e9856df7dd74a5378e9155bb866c2e1d\", \"h_post\": \"5275b11820c2c5f6586904dfca84c83e98ac1382d26a3b6a7818c3fcd7d492fc\", \"notify_set\": []}",
+        "elapsed_ms": 27.59
+      }
+    ],
+    "final_text": "`commit_write` succeeded.\n\n- **write_id**: `bea131ab-1923-42e9-afbb-d94c453cd5aa`\n- **h_pre**: `82dc0f4d46e82251cb8ae8a764355229e9856df7dd74a5378e9155bb866c2e1d`\n- **h_post**: `5275b11820c2c5f6586904dfca84c83e98ac1382d26a3b6a7818c3fcd7d492fc`\n- **notify_set**: `[]` (no agents were registered on this node or its k-hop neighbors)\n\nThe signature change for `AsyncClient._send_single_request` has been committed to the graph. Since this is the baseline run, the empty `notify_set` is expected \u2014 no coordination occurred.",
+    "final_session_id": "4c27f54e-946f-49a9-ab74-6f19692b80ba",
+    "error": null
+  },
+  "phase2": null,
+  "final_code": "import httpx\nfrom httpx._models import Request, Response\n\n\nclass RetryingAsyncClient(httpx.AsyncClient):\n    async def _send_single_request(self, request: Request) -> Response:\n        last_exc = None\n        for attempt in range(3):\n            try:\n                return await super()._send_single_request(request)\n            except httpx.HTTPError as exc:\n                last_exc = exc\n        raise last_exc",
+  "mypy": {
+    "agent_code_pre_passed": false,
+    "agent_code_post_passed": false,
+    "raw_pre_passed": false,
+    "raw_post_passed": false,
+    "pre_write_output": "agent_b_code.py:13: error: Exception must be derived from BaseException  [misc]",
+    "post_write_output": "httpx\\_client.py:1694: error: Missing positional argument \"deadline\" in call to \"_send_single_request\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:6: error: Signature of \"_send_single_request\" incompatible with supertype \"httpx._client.AsyncClient\"  [override]\nagent_b_code.py:6: note:      Superclass:\nagent_b_code.py:6: note:          def _send_single_request(self, request: Request, deadline: float) -> Coroutine[Any, Any, Response]\nagent_b_code.py:6: note:      Subclass:\nagent_b_code.py:6: note:          def _send_single_request(self, request: Request) -> Coroutine[Any, Any, Response]\nagent_b_code.py:10: error: Missing positional argument \"deadline\" in call to \"_send_single_request\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:13: error: Exception must be derived from BaseException  [misc]",
+    "error": null
+  },
+  "error": null
+}

@@ -1,0 +1,100 @@
+{
+  "started_at": "2026-05-09T18:13:04.669064+00:00",
+  "finished_at": "2026-05-09T18:59:00.143113+00:00",
+  "model": "claude-sonnet-4-6",
+  "tasks": [
+    "T01",
+    "T03",
+    "T05",
+    "T09",
+    "T13"
+  ],
+  "conditions": [
+    "kovex",
+    "baseline"
+  ],
+  "runs_per_cell": 5,
+  "n_trials": 50,
+  "summary": [
+    {
+      "task_id": "T01",
+      "condition": "baseline",
+      "runs": 5,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T01",
+      "condition": "kovex",
+      "runs": 5,
+      "agent_code_post_pass": 4,
+      "agent_code_post_pass_rate": 0.8,
+      "errored": 0
+    },
+    {
+      "task_id": "T03",
+      "condition": "baseline",
+      "runs": 5,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T03",
+      "condition": "kovex",
+      "runs": 5,
+      "agent_code_post_pass": 5,
+      "agent_code_post_pass_rate": 1.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T05",
+      "condition": "baseline",
+      "runs": 5,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T05",
+      "condition": "kovex",
+      "runs": 5,
+      "agent_code_post_pass": 4,
+      "agent_code_post_pass_rate": 0.8,
+      "errored": 0
+    },
+    {
+      "task_id": "T09",
+      "condition": "baseline",
+      "runs": 5,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T09",
+      "condition": "kovex",
+      "runs": 5,
+      "agent_code_post_pass": 3,
+      "agent_code_post_pass_rate": 0.6,
+      "errored": 0
+    },
+    {
+      "task_id": "T13",
+      "condition": "baseline",
+      "runs": 5,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T13",
+      "condition": "kovex",
+      "runs": 5,
+      "agent_code_post_pass": 1,
+      "agent_code_post_pass_rate": 0.2,
+      "errored": 0
+    }
+  ]
+}

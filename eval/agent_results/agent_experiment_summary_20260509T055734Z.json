@@ -1,0 +1,32 @@
+{
+  "started_at": "2026-05-09T05:55:44.833536+00:00",
+  "finished_at": "2026-05-09T05:57:34.045953+00:00",
+  "model": "claude-sonnet-4-6",
+  "tasks": [
+    "T01"
+  ],
+  "conditions": [
+    "kovex",
+    "baseline"
+  ],
+  "runs_per_cell": 1,
+  "n_trials": 2,
+  "summary": [
+    {
+      "task_id": "T01",
+      "condition": "baseline",
+      "runs": 1,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T01",
+      "condition": "kovex",
+      "runs": 1,
+      "agent_code_post_pass": 1,
+      "agent_code_post_pass_rate": 1.0,
+      "errored": 0
+    }
+  ]
+}

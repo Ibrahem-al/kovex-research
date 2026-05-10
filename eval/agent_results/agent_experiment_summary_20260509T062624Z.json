@@ -1,0 +1,100 @@
+{
+  "started_at": "2026-05-09T06:03:55.691883+00:00",
+  "finished_at": "2026-05-09T06:26:24.399258+00:00",
+  "model": "claude-sonnet-4-6",
+  "tasks": [
+    "T01",
+    "T03",
+    "T05",
+    "T09",
+    "T13"
+  ],
+  "conditions": [
+    "kovex",
+    "baseline"
+  ],
+  "runs_per_cell": 3,
+  "n_trials": 30,
+  "summary": [
+    {
+      "task_id": "T01",
+      "condition": "baseline",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T01",
+      "condition": "kovex",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T03",
+      "condition": "baseline",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T03",
+      "condition": "kovex",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T05",
+      "condition": "baseline",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T05",
+      "condition": "kovex",
+      "runs": 3,
+      "agent_code_post_pass": 2,
+      "agent_code_post_pass_rate": 0.6666666666666666,
+      "errored": 0
+    },
+    {
+      "task_id": "T09",
+      "condition": "baseline",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T09",
+      "condition": "kovex",
+      "runs": 3,
+      "agent_code_post_pass": 1,
+      "agent_code_post_pass_rate": 0.3333333333333333,
+      "errored": 0
+    },
+    {
+      "task_id": "T13",
+      "condition": "baseline",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    },
+    {
+      "task_id": "T13",
+      "condition": "kovex",
+      "runs": 3,
+      "agent_code_post_pass": 0,
+      "agent_code_post_pass_rate": 0.0,
+      "errored": 0
+    }
+  ]
+}

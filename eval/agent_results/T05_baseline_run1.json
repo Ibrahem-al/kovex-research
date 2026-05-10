@@ -1,0 +1,92 @@
+{
+  "task_id": "T05",
+  "condition": "baseline",
+  "run_idx": 1,
+  "model": "claude-sonnet-4-6",
+  "agent_a_id": "agentA_T05_baseline_r1",
+  "agent_b_id": "agentB_T05_baseline_r1",
+  "write_target_name": "AsyncClient.request",
+  "b_reg_name": "AsyncClient.get",
+  "expected_distance": 1,
+  "expected_kovex_notifies": true,
+  "timestamp": "2026-05-09T18:38:06.340330+00:00",
+  "phase1": {
+    "turns": 1,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<python_code>\nimport httpx\n\nasync def get_with_body(client: httpx.AsyncClient, url: httpx.URL | str, payload: bytes) -> httpx.Response:\n    return await client.request(\"GET\", url, content=payload)\n</python_code>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.005316,
+        "session_id": "29d946ed-e88e-411f-8a3f-84651a4880e2",
+        "input_tokens": 3,
+        "output_tokens": 70
+      }
+    ],
+    "tool_calls": [],
+    "final_text": "<python_code>\nimport httpx\n\nasync def get_with_body(client: httpx.AsyncClient, url: httpx.URL | str, payload: bytes) -> httpx.Response:\n    return await client.request(\"GET\", url, content=payload)\n</python_code>",
+    "final_session_id": "29d946ed-e88e-411f-8a3f-84651a4880e2",
+    "error": null
+  },
+  "agent_a": {
+    "turns": 2,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<tool_call>\n{\"name\": \"commit_write\", \"input\": {\"agentId\": \"agentA_T05_baseline_r1\", \"nodeId\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"patch\": {\"signature\": \"async def request(\\n    self,\\n    method: str,\\n    url: URL | str,\\n    *,\\n    body: RequestContent | None = None,\\n    ...\\n) -> Response\", \"return_type\": \"Response\"}}}\n</tool_call>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0074172,
+        "session_id": "cbfe8c79-ea37-4640-ad9e-fd5b08f3412f",
+        "input_tokens": 3,
+        "output_tokens": 190
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "`commit_write` succeeded. Here's the summary:\n\n| Field | Value |\n|---|---|\n| `write_id` | `b364aa0d-55d6-43d0-9d64-7dce7a99f621` |\n| `h_pre` | `ddf7b722...` |\n| `h_post` | `61358f3c...` |\n| Agents notified | **15** |\n\n**Notify set breakdown:**\n- 5 agents notified at **distance 0** (direct read on the written node): `agentB_T03_kovex_r0` through `r4`\n- 5 agents notified at **distance 1** via trigger node `140b0838...`: `agentB_T05_kovex_r0` through `r4`\n- 5 agents notified at **distance 1** via trigger node `6fcd69ad...`: `agentB_T01_kovex_r0` through `r4`\n\nThe `content` \u2192 `body` rename on `AsyncClient.request` is now committed to the graph, and all dependent agents have been queued directives.",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.05232285,
+        "session_id": "cbfe8c79-ea37-4640-ad9e-fd5b08f3412f",
+        "input_tokens": 3,
+        "output_tokens": 305
+      }
+    ],
+    "tool_calls": [
+      {
+        "turn": 0,
+        "name": "commit_write",
+        "input": {
+          "agentId": "agentA_T05_baseline_r1",
+          "nodeId": "ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d",
+          "patch": {
+            "signature": "async def request(\n    self,\n    method: str,\n    url: URL | str,\n    *,\n    body: RequestContent | None = None,\n    ...\n) -> Response",
+            "return_type": "Response"
+          }
+        },
+        "is_error": false,
+        "result_preview": "{\"write_id\": \"b364aa0d-55d6-43d0-9d64-7dce7a99f621\", \"h_pre\": \"ddf7b7229501ab1f6107dbfece0f7222d11dc36de6b68d42b9f333689ea01087\", \"h_post\": \"61358f3c3d46118c64c22ce0f4391e66902ff4e29808d0c66a69a70f3992e8b4\", \"notify_set\": [{\"agent\": \"agentB_T03_kovex_r0\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 0}, {\"agent\": \"agentB_T03_kovex_r1\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 0}, {\"agent\": \"agentB_T03_kovex_r2\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 0}, {\"agent\": \"agentB_T03_kovex_r3\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 0}, {\"agent\": \"agentB_T03_kovex_r4\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 0}, {\"agent\": \"agentB_T05_kovex_r0\", \"trigger_node\": \"140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428\", \"distance\": 1}, {\"agent\": \"agentB_T05_kovex_r1\", \"trigger_node\": \"140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428\", \"distance\": 1}, {\"agent\": \"agentB_T05_kovex_r2\", \"trigger_node\": \"140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428\", \"distance\": 1}, {\"agent\": \"agentB_T05_kovex_r3\", \"trigger_node\": \"140b0838d8986e366cf5b0ab3c840636ef76af87fdfb470edb6147f67719c428\", \"distance\": 1}, {\"agent\": \"agentB_T05_kovex_r4\", \"trigger_node\": \"140b0838d8986e366cf5b0ab3c8406",
+        "elapsed_ms": 27.7
+      }
+    ],
+    "final_text": "`commit_write` succeeded. Here's the summary:\n\n| Field | Value |\n|---|---|\n| `write_id` | `b364aa0d-55d6-43d0-9d64-7dce7a99f621` |\n| `h_pre` | `ddf7b722...` |\n| `h_post` | `61358f3c...` |\n| Agents notified | **15** |\n\n**Notify set breakdown:**\n- 5 agents notified at **distance 0** (direct read on the written node): `agentB_T03_kovex_r0` through `r4`\n- 5 agents notified at **distance 1** via trigger node `140b0838...`: `agentB_T05_kovex_r0` through `r4`\n- 5 agents notified at **distance 1** via trigger node `6fcd69ad...`: `agentB_T01_kovex_r0` through `r4`\n\nThe `content` \u2192 `body` rename on `AsyncClient.request` is now committed to the graph, and all dependent agents have been queued directives.",
+    "final_session_id": "cbfe8c79-ea37-4640-ad9e-fd5b08f3412f",
+    "error": null
+  },
+  "phase2": null,
+  "final_code": "import httpx\n\nasync def get_with_body(client: httpx.AsyncClient, url: httpx.URL | str, payload: bytes) -> httpx.Response:\n    return await client.request(\"GET\", url, content=payload)",
+  "mypy": {
+    "agent_code_pre_passed": true,
+    "agent_code_post_passed": false,
+    "raw_pre_passed": true,
+    "raw_post_passed": false,
+    "pre_write_output": "",
+    "post_write_output": "httpx\\_client.py:1530: error: Name \"content\" is not defined  [name-defined]\nhttpx\\_client.py:1859: error: Unexpected keyword argument \"content\" for \"request\" of \"AsyncClient\"  [call-arg]\nhttpx\\_client.py:1896: error: Unexpected keyword argument \"content\" for \"request\" of \"AsyncClient\"  [call-arg]\nhttpx\\_client.py:1933: error: Unexpected keyword argument \"content\" for \"request\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:4: error: Unexpected keyword argument \"content\" for \"request\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:4: note: \"request\" defined in \"httpx._client\"",
+    "error": null
+  },
+  "error": null
+}

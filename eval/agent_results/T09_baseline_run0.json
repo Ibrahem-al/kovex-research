@@ -1,0 +1,92 @@
+{
+  "task_id": "T09",
+  "condition": "baseline",
+  "run_idx": 0,
+  "model": "claude-sonnet-4-6",
+  "agent_a_id": "agentA_T09_baseline_r0",
+  "agent_b_id": "agentB_T09_baseline_r0",
+  "write_target_name": "AsyncClient.send",
+  "b_reg_name": "AsyncClient.get",
+  "expected_distance": 2,
+  "expected_kovex_notifies": true,
+  "timestamp": "2026-05-09T18:47:50.755910+00:00",
+  "phase1": {
+    "turns": 1,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<python_code>\nimport httpx\n\nasync def get_streaming(client: httpx.AsyncClient, url: str) -> httpx.Response:\n    request = client.build_request(\"GET\", url)\n    response = await client.send(request, stream=True)\n    return response\n</python_code>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0054413000000000005,
+        "session_id": "ccfac6a4-82b3-4f4c-8cac-18322717e19b",
+        "input_tokens": 3,
+        "output_tokens": 76
+      }
+    ],
+    "tool_calls": [],
+    "final_text": "<python_code>\nimport httpx\n\nasync def get_streaming(client: httpx.AsyncClient, url: str) -> httpx.Response:\n    request = client.build_request(\"GET\", url)\n    response = await client.send(request, stream=True)\n    return response\n</python_code>",
+    "final_session_id": "ccfac6a4-82b3-4f4c-8cac-18322717e19b",
+    "error": null
+  },
+  "agent_a": {
+    "turns": 2,
+    "transcript": [
+      {
+        "turn": 0,
+        "role": "assistant",
+        "text": "<tool_call>\n{\"name\": \"commit_write\", \"input\": {\"agentId\": \"agentA_T09_baseline_r0\", \"nodeId\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"patch\": {\"signature\": \"async def send(\\n    self,\\n    request: Request,\\n    *,\\n    auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\\n    follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\\n) -> Response\", \"return_type\": \"Response\"}}}\n</tool_call>",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.0311327,
+        "session_id": "a147d8ce-7db8-4715-9e92-da428ae57674",
+        "input_tokens": 3,
+        "output_tokens": 203
+      },
+      {
+        "turn": 1,
+        "role": "assistant",
+        "text": "`commit_write` succeeded. Here's a summary:\n\n| Field | Value |\n|---|---|\n| `write_id` | `3a488a14-7c50-4c37-9ee7-48ff2afbfc8d` |\n| `h_pre` | `00394a2e...` |\n| `h_post` | `e23ea745...` |\n| Agents notified | 20 |\n\n**Notify set breakdown:**\n- **T01 kovex agents (r0\u2013r4)** \u2014 distance 0: directly read the modified node (`AsyncClient.send`)\n- **T03 kovex agents (r0\u2013r4)** \u2014 distance 1: depend on a 1-hop neighbor (`ce1616d3...`)\n- **T05 kovex agents (r0\u2013r4)** \u2014 distance 2: depend on a 2-hop neighbor (`140b0838...`)\n- **T09 kovex agents (r0\u2013r4)** \u2014 distance 2: same 2-hop neighbor as T05\n\nThe `stream` parameter removal has been logged and all dependent Kovex-tracked agents have been enqueued with directives.",
+        "raw_full_text": null,
+        "stop_reason": "end_turn",
+        "cost_usd": 0.05320785,
+        "session_id": "a147d8ce-7db8-4715-9e92-da428ae57674",
+        "input_tokens": 3,
+        "output_tokens": 280
+      }
+    ],
+    "tool_calls": [
+      {
+        "turn": 0,
+        "name": "commit_write",
+        "input": {
+          "agentId": "agentA_T09_baseline_r0",
+          "nodeId": "6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415",
+          "patch": {
+            "signature": "async def send(\n    self,\n    request: Request,\n    *,\n    auth: AuthTypes | UseClientDefault | None = USE_CLIENT_DEFAULT,\n    follow_redirects: bool | UseClientDefault = USE_CLIENT_DEFAULT,\n) -> Response",
+            "return_type": "Response"
+          }
+        },
+        "is_error": false,
+        "result_preview": "{\"write_id\": \"3a488a14-7c50-4c37-9ee7-48ff2afbfc8d\", \"h_pre\": \"00394a2ea12dfa83d1e43225d7a8309cf40f168005e1a520323cb444722fbc63\", \"h_post\": \"e23ea74568f206e6770e865dbf6e02cc7046f37529e34bf0c9bc0414a46059ea\", \"notify_set\": [{\"agent\": \"agentB_T01_kovex_r0\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r1\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r2\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r3\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T01_kovex_r4\", \"trigger_node\": \"6fcd69adfdde7e39f4f287e3c8eed33207c86dd753781fc662964c0ef00a1415\", \"distance\": 0}, {\"agent\": \"agentB_T03_kovex_r0\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 1}, {\"agent\": \"agentB_T03_kovex_r1\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 1}, {\"agent\": \"agentB_T03_kovex_r2\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 1}, {\"agent\": \"agentB_T03_kovex_r3\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b72da294fdae7100b66e0dbd9dbb9285ea0d\", \"distance\": 1}, {\"agent\": \"agentB_T03_kovex_r4\", \"trigger_node\": \"ce1616d3932e31fed4c0f8b9c914b7",
+        "elapsed_ms": 42.21
+      }
+    ],
+    "final_text": "`commit_write` succeeded. Here's a summary:\n\n| Field | Value |\n|---|---|\n| `write_id` | `3a488a14-7c50-4c37-9ee7-48ff2afbfc8d` |\n| `h_pre` | `00394a2e...` |\n| `h_post` | `e23ea745...` |\n| Agents notified | 20 |\n\n**Notify set breakdown:**\n- **T01 kovex agents (r0\u2013r4)** \u2014 distance 0: directly read the modified node (`AsyncClient.send`)\n- **T03 kovex agents (r0\u2013r4)** \u2014 distance 1: depend on a 1-hop neighbor (`ce1616d3...`)\n- **T05 kovex agents (r0\u2013r4)** \u2014 distance 2: depend on a 2-hop neighbor (`140b0838...`)\n- **T09 kovex agents (r0\u2013r4)** \u2014 distance 2: same 2-hop neighbor as T05\n\nThe `stream` parameter removal has been logged and all dependent Kovex-tracked agents have been enqueued with directives.",
+    "final_session_id": "a147d8ce-7db8-4715-9e92-da428ae57674",
+    "error": null
+  },
+  "phase2": null,
+  "final_code": "import httpx\n\nasync def get_streaming(client: httpx.AsyncClient, url: str) -> httpx.Response:\n    request = client.build_request(\"GET\", url)\n    response = await client.send(request, stream=True)\n    return response",
+  "mypy": {
+    "agent_code_pre_passed": true,
+    "agent_code_post_passed": false,
+    "raw_pre_passed": true,
+    "raw_post_passed": false,
+    "pre_write_output": "",
+    "post_write_output": "httpx\\_client.py:1583: error: Unexpected keyword argument \"stream\" for \"send\" of \"AsyncClient\"  [call-arg]\nhttpx\\_client.py:1635: error: Name \"stream\" is not defined  [name-defined]\nagent_b_code.py:5: error: Unexpected keyword argument \"stream\" for \"send\" of \"AsyncClient\"  [call-arg]\nagent_b_code.py:5: note: \"send\" defined in \"httpx._client\"",
+    "error": null
+  },
+  "error": null
+}
